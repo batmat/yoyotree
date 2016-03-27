@@ -27,17 +27,30 @@ public class GraphTest {
 
     @Test
     public void testTree() throws Exception {
-        GraphLoader loader = new GraphLoader(new File("list"));
+        GraphLoader loader = new FileGraphLoader(new File("list"));
 
         Graph graph = loader.get();
+        System.out.println(graph.size());
         Node actcom = graph.getNode("ACTCOM");
         actcom.tree();
     }
 
     @Test
+    public void simple() throws Exception {
+
+        GraphLoader loader = new FileGraphLoader(new File("list2"));
+        Graph graph = loader.get();
+
+        Node actcom = graph.getNode("ACTCOM");
+
+        assertTrue(actcom.hasDescendant(new Node("COMPO")));
+        assertTrue(actcom.hasDescendant(new Node("PPGEN")));
+    }
+
+    @Test
     public void testYoyo() throws Exception {
 
-        GraphLoader loader = new GraphLoader(new File("list"));
+        GraphLoader loader = new FileGraphLoader(new File("list"));
         Graph graph = loader.get();
 
         Node actcom = graph.getNode("ACTCOM");

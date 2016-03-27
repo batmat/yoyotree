@@ -1,6 +1,7 @@
 package net.batmat;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class Node {
@@ -21,18 +22,25 @@ public class Node {
     }
 
     private boolean hasDescendant0(Node lookedUp, Set<Node> visited) {
-        if(visited.contains(this)){
+        if (visited.contains(this)) {
             return false;
         }
         visited.add(this);
-        for (Node descendant : descendants) {
-            if (descendant.equals(lookedUp)) {
-                return true;
-            }
-            if (descendant.hasDescendant0(lookedUp, visited)) {
-                return true;
-            }
+
+        Optional<Node> foundDescendant = descendants.stream()
+                .filter(descendant -> descendant.equals(lookedUp))
+                .findAny();
+        if (foundDescendant.isPresent()) {
+            return true;
         }
+
+        Optional<Node> foundDescendantOfDescendant = descendants.stream()
+                .filter(descendant -> descendant.hasDescendant0(lookedUp, visited))
+                .findAny();
+        if (foundDescendantOfDescendant.isPresent()) {
+            return true;
+        }
+
         return false;
     }
 
@@ -47,14 +55,14 @@ public class Node {
     public String tree0(int shift, Set<Node> visited) {
         StringBuilder builder = new StringBuilder();
         builder.append(indent(shift)).append(name);
-        if(visited.contains(this)) {
+        if (visited.contains(this)) {
             builder.append("*** LOOP DETECTED\n");
             return builder.toString();
         }
         visited.add(this);
         builder.append('\n');
         for (Node descendant : descendants) {
-            builder.append(indent(shift + 2)).append(descendant.tree0(shift+1, visited));
+            builder.append(indent(shift + 2)).append(descendant.tree0(shift + 1, visited));
         }
         return builder.toString();
     }
@@ -69,7 +77,7 @@ public class Node {
 
     @Override
     public boolean equals(Object obj) {
-        return name.equals(((Node)obj).getName());
+        return name.equals(((Node) obj).getName());
     }
 
     @Override

@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class FileGraphLoader implements GraphLoader {
     final Graph graph;
@@ -16,19 +14,18 @@ public class FileGraphLoader implements GraphLoader {
     public FileGraphLoader(File list) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(list));
 
-        String line = null;
-        while (null != (line = reader.readLine())) {
+        reader.lines().forEach(line -> {
             String[] split = line.split("->");
             if (split.length != 2) {
                 System.err.println("Ignoring line " + line);
-                continue;
+                return;
             }
             String parent = split[0];
             String descendant = split[1];
             Node parentNode = getNode(parent);
             Node descendantNode = getNode(descendant);
             parentNode.addDirectDescendant(descendantNode);
-        }
+        });
 
         graph = createGraph();
     }

@@ -1,0 +1,12 @@
+= Simple Graph API (~Dojo)
+
+Wrote this little API for a friend mostly to practice basic things. Use jgrapht or actual alternatives for graph processing/analysis.
+
+This code can merely be interesting if you want to have a look at a short and working piece of code to handle graphs.
+For example in a dojo or something like that.
+
+== What this does
+
+* Handles nodes by name (String) and their downstream relations
+* API to find cycles from a given node
+

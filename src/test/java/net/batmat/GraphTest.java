@@ -3,18 +3,16 @@ package net.batmat;
 
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
-
 import java.io.File;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class GraphTest {
 
     @Test
-    public void testAddNode() throws Exception {
+    public void simpleDependencies() throws Exception {
         Node A = new Node("A");
         Node B = new Node("B");
         Node C = new Node("C");
@@ -24,27 +22,22 @@ public class GraphTest {
         assertTrue(A.hasDescendant(B));
         assertTrue(B.hasDescendant(C));
         assertTrue(A.hasDescendant(C));
-
-        System.out.println(A.tree());
-
     }
 
     @Test
-    public void testTree() throws Exception {
+    public void tree() throws Exception {
         GraphLoader loader = new FileGraphLoader(new File("list"));
 
         Graph graph = loader.get();
-        System.out.println(graph.size());
         Node actcom = graph.getNode("ACTCOM");
         actcom.tree();
     }
 
     @Test
-    public void circleSimple() throws Exception {
+    public void simpleCycle() throws Exception {
         Graph graph = new Graph();
         graph.addDependency("A", "B");
         graph.addDependency("B", "A");
-
 
         Node a = graph.getNode("A");
         Node b = graph.getNode("B");
@@ -62,7 +55,7 @@ public class GraphTest {
     }
 
     @Test
-    public void testLoad() throws Exception {
+    public void findCycles() throws Exception {
         Graph graph = new Graph();
         graph.addDependency("A", "B");
         graph.addDependency("B", "C");
@@ -84,27 +77,26 @@ public class GraphTest {
         assertTrue(nodeA.hasDescendant(b));
         assertTrue(nodeA.hasDescendant(nodeC));
 
-        CircularDependencyFinder finder = new CircularDependencyFinder(graph);
+        CircularDependencyFinder cycleFinder = new CircularDependencyFinder(graph);
 
         assertThat(
-                finder.getCircularDependenciesForNode(nodeA)
+                cycleFinder.getCircularDependenciesForNode(nodeA)
                         .stream()
                         .map(circularDependency -> circularDependency.toString())
                         .collect(Collectors.toList())
         ).contains("A->D->A", "A->B->A");
         assertThat(
-                finder.getCircularDependenciesForNode(nodeC)
+                cycleFinder.getCircularDependenciesForNode(nodeC)
                         .stream()
                         .map(circularDependency -> circularDependency.toString())
                         .collect(Collectors.toList())
         ).contains("C->F->G->C");
 
-        assertThat(finder.getCircularDependenciesForNode(nodeZ)).isEmpty();
-
+        assertThat(cycleFinder.getCircularDependenciesForNode(nodeZ)).isEmpty();
     }
 
     @Test
-    public void simple() throws Exception {
+    public void simpleGraphLoad() throws Exception {
 
         GraphLoader loader = new FileGraphLoader(new File("list2"));
         Graph graph = loader.get();
@@ -116,7 +108,7 @@ public class GraphTest {
     }
 
     @Test
-    public void testYoyo() throws Exception {
+    public void graphLoad() throws Exception {
 
         GraphLoader loader = new FileGraphLoader(new File("list"));
         Graph graph = loader.get();

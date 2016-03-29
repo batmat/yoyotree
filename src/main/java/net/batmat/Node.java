@@ -84,4 +84,13 @@ public class Node {
     public int hashCode() {
         return name.hashCode();
     }
+
+    public Set<Node> getDescendants() {
+        return descendants;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
